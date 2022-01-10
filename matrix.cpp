@@ -1,78 +1,96 @@
 #include "matrix.hpp"
 
-
-// Für Matrizen
+// Für quadratische Matrizen
 Matrix::Matrix() {
 	n = 0;
-	dim = 0;
 	matrix = (double**) 0;
+	std::cout<<"object created using first constructor"<<std::endl;
 }
 
+// first user-defined constructor
 Matrix::Matrix(int n) {
 	assert(n>0);
 	this->n = n;
-	dim = n*n;
-	matrix = (double**) malloc(n*sizeof(double*));
+	matrix = new double *[n];
 	assert(matrix != (double**) 0);
-
 
 	// allokiert speicher für jede zeile
 	// Code nach Schmaranz (S. 133)
 	int row_count = n;
 	while(row_count--) {
-		matrix[row_count] = (double*) malloc(n*sizeof(int*));
+		matrix[row_count] = new double[n];
 	}
 	for (int j=0;j<n;j++) {
 		for (int k = 0; k<n;k++) {
 			matrix[j][k] = 0;
 		}
 	}
+	std::cout<<"object created using second constructor"<<std::endl;
 }
 
+// seocnd user-defined constructor
 Matrix::Matrix(int n, double init) {
 	assert(n>0);
 	this->n = n;
-	dim = n*n;
-	matrix = (double**) malloc(n*sizeof(double*));
+	matrix = new double *[n];
 	assert(matrix!= (double**) 0);
 	int row_count = n;
 	while(row_count--) {
-		matrix[row_count] = (double*) malloc(n*sizeof(int*));
+		matrix[row_count] = new double[n];
 	}
 	for (int j=0;j<n;j++) {
 		for (int k = 0; k<n;k++) {
-			matrix[j][k] = init;
+			matrix[j][k] = init;	
 		}
+	}
+	std::cout<<"object created using second constructor"<<std::endl;
+}
+
+// copy constructor
+Matrix::Matrix(const Matrix& rhs) {
+	std::cout<<"copy constructor"<<std::endl;
+	matrix = rhs.matrix;
+	n = rhs.n;
+}
+
+// assignment operator
+Matrix& Matrix::operator=(const Matrix& rhs) {
+	std::cout<< "assignment" <<std::endl;
+	if (this != &rhs) {
+		matrix = rhs.matrix;
+		n = rhs.n;
+		return *this;
 	}
 }
 
-
+// user-defined destructor
 Matrix::~Matrix() {
-	if (dim > 0) {
-		free(matrix);
-	}
 	std::cout<<"Object deleted"<<std::endl;
 }
 
-int Matrix::size() {
-	return dim;
+// get size (dimension) of the matrix
+int Matrix::size() const {
+	return n*n;
 }
 
+// change value for a given entry[j][k]
 void Matrix::set(int j, int k, double value) {
 	assert(j>=0 && j<n);
 	assert(k>=0 && k<n);
 	matrix[j][k] = value;
 }
 
-double Matrix::get(int j, int k) {
+// get value for a given entry[j][k]
+double Matrix::get(int j, int k) const {
 	assert(j>=0 && j<n);
 	assert(k>=0 && k<n);
 	return matrix[j][k];
 }
 
 // Aufgabe 10.4
+// manually set every entry for a given matrix
 void Matrix::scanMatrix() {
-	assert(this->n>0); // aus dem grund weil standardkonstruktor setzt n auf 0 und somit können keine koeffizienten eingelesen werden
+	assert(n>0); // aus dem grund weil standardkonstruktor setzt n auf 0 und somit können keine koeffizienten eingelesen werden
 	for (int j=0;j<n;j++) {
 		for (int k = 0; k<n;k++) {
 			std::cout<<"Matrix"<<"["<<j<<"]"<<"["<<k<<"] = ";
@@ -84,7 +102,6 @@ void Matrix::scanMatrix() {
 void Matrix::scanMatrix(int n) {
 	assert(n>0);
 	this->n = n;
-	dim = n*n;
 	matrix = (double**) realloc(matrix,n*sizeof(double*));
 	assert(matrix!= (double**) 0);
 	int row_count;
@@ -100,6 +117,7 @@ void Matrix::scanMatrix(int n) {
 	}
 }
 
+// print each entry of a given matrix
 void Matrix::printMatrix() {
 	for (int j = 0;j<n;j++) {
 		for (int k = 0;k<n;k++) {
@@ -110,9 +128,9 @@ void Matrix::printMatrix() {
 }
 
 // Die Spur eienr quadratischen Matrix ist die Summe der Hauptdiagonale dieser Matrix
-// Ist die Spur tr(A) = 0, sodann ist die Matrix spurfrei
-// Weitere Eigenschaften auf Wikipedia ... 
-double Matrix::trace() {
+// Wenn die Spur tr(A) = 0, dann heisst die Matrix ist spurfrei
+// Weitere Eigenschaften: ... 
+double Matrix::trace() const {
 	int sum = 0;
 	for (int j=0;j<n;j++){
 		for (int k = 0;k<n;k++) {
@@ -126,7 +144,8 @@ double Matrix::trace() {
 
 // Aufgabe 10.5 
 
-double Matrix::ColumnSumNorm() {
+// returns the column norm of a given matrix
+double Matrix::ColumnSumNorm() const {
 	double sum;
 	double max_sum = 0;
 	for (int j=0;j<n;j++) {
@@ -141,7 +160,8 @@ double Matrix::ColumnSumNorm() {
 	return max_sum;
 }
 
-double Matrix::RowSumNorm() {
+// returns the row norm of a given matrix
+double Matrix::RowSumNorm() const {
 	double sum;
 	double max_sum = 0;
 	for (int j=0;j<n;j++) {
@@ -156,7 +176,7 @@ double Matrix::RowSumNorm() {
 	return max_sum;
 }
 
-double Matrix::frobeniusNorm() {
+double Matrix::frobeniusNorm() const {
 	double sum;
 	sum = 0;
 	for (int j=0;j<n;j++) {
@@ -167,7 +187,8 @@ double Matrix::frobeniusNorm() {
 	return sqrt(sum);
 }
 
-double Matrix::maxNorm() { 
+// returns the max of a given matrix
+double Matrix::maxNorm() const { 
 	int max;
 	max = 0;
 	for (int j=0;j<n;j++) {
@@ -179,11 +200,10 @@ double Matrix::maxNorm() {
 	}
 	return max;
 }
-
+// creates a unit matrix
 void Matrix::unitMatrix(int n) {
 	assert(n>0);
 	this->n = n;
-	dim = n*n;
 	matrix = (double**) malloc(n*sizeof(double*));
 	assert(matrix != (double**) 0);
 	int row_count = n;
@@ -200,4 +220,13 @@ void Matrix::unitMatrix(int n) {
 		}
 	}
 }
+
+
+// serie 11
+// laplacescher Entwicklungssatz
+// Ermittlung der determinante durch den entwicklungsatz von laplace
+
+
+
+
 

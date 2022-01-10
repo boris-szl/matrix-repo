@@ -14,21 +14,27 @@ class Matrix {
 private: 
 	// dimension of the Matrix
 	int n;
-	int dim;
 	double** matrix;
+
 public:
-	// constructor and destructor
+	// constructors and destructor
 	Matrix();
 	Matrix(int n);
 	Matrix(int n, double value);
+	// dreierregel (if copy constructos, then assigment constructor and destructor)
+	// copy constructor
+	Matrix(const Matrix& rhs);
+	// assignment operator
+	Matrix& operator=(const Matrix& rhs);
+	// destructor
 	~Matrix();
 
 	// return matrix dimension
-	int size();
+	int size() const;
 
-	// reand and write coefficients
+	// read and write coefficients
 	void set(int k, int j, double value);
-	double get(int j,int k);
+	double get(int j,int k) const;
 
 
 	// Aufgabe 10.4
@@ -37,13 +43,14 @@ public:
 	// overwriting matrix with new n
 	void scanMatrix(int n);
 	void printMatrix(int n);
-	double trace();
+
+	double trace() const;
 
 	//  Aufgabe 10.5
-	double ColumnSumNorm();
-	double RowSumNorm();
-	double frobeniusNorm();
-	double maxNorm();
+	double ColumnSumNorm() const;
+	double RowSumNorm() const;
+	double frobeniusNorm() const;
+	double maxNorm() const;
 
 	void printMatrix();
 
